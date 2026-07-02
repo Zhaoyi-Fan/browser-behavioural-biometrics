@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<!--
+  Mobile sensor data-collection demo (thesis Chapter 9, Section 9.3).
+
+  Shows that a plain web page - no app install - can read the same touch,
+  motion and orientation signals used for mobile identification, straight from
+  the browser. It just displays the readings on screen (nothing is uploaded).
+
+  On iOS 13+ the Motion/Orientation sensors need explicit consent, requested by
+  the "Click to authorize" button (Apple's requirement). On the Android
+  browsers tested for the thesis no permission was needed at all (Table 10.3).
+  Serve over HTTPS and open on a phone; a desktop browser shows the touch/key
+  fields but no sensor data.
+-->
+<html>
+<head>
+	<meta charset="UTF-8"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-touch-fullscreen" content="yes">
+	<title>Mobile Touch Test</title>
+</head>
+<body>
+	<h2 id='out'>Mobile sensor test</h2>
+	<button id="btn">Click to authorize</button>
+	<input type="text" id='inputtext'>
+	<div type='text' id="kd"></div>
+	<div type='text' id="ku"></div>
+	<div id="msg">Action type: (coordinates), (acceleration), (orientation), (rotationRate)</div>
+	<div type='text' id="motion"></div>
+	<div type='text' id="orientation"></div>
+	<div type='text' id="otest"></div>
+	<div type='text' id="rotation"></div>
+	<div type='text' id="start">start</div>
+	<div type='text' id="end">end</div>
+	<div type='text' id="move">move</div>
+</body>
+
+<script type="text/javascript">
+	document.getElementById("btn").addEventListener("click", function() {
+        if (typeof DeviceMotionEvent.requestPermission === 'function') {
+            DeviceMotionEvent.requestPermission()
+            .then(permissionState => {
+                if (permissionState === 'granted') {
+                    window.addEventListener('devicemotion', deviceMotionHandler, false);
+                    function deviceMotionHandler(){}
+                }
+            })
+            .catch((err) => {
+                alert("Not authorized");
+            });
+        } else {
+            alert("not found")
+        }
+    })
+	window.addEventListener('load', load, false);
+	var Xg=Yg=Zg=0;
+    var Xo=Yo=Zo=0;
+    var Xr=Yr=Zr=0;
+    function load (){
+	    document.addEventListener('touchstart', touch, { passive: false });
+	    document.addEventListener('touchmove', touch, { passive: false });
+	    document.addEventListener('touchend', touch, { passive: false });
+	    function touch (event){
+	        var event = event || window.event;    
+	        var g = "("+ Xg+ ", "+ Yg+ ", "+ Zg+ ")";
+	        var r = "("+ Xr+ ", "+ Yr+ ", "+ Zr+ ")";
+	        var o = "("+ Xo+ ", "+ Yo+ ", "+ Zo+ ")";
+	        switch(event.type){
+	            case "touchstart":
+	                outstart = event.changedTouches[0].clientX.toFixed(0) + ", " + event.changedTouches[0].clientY.toFixed(0);
+	                document.getElementById('start').innerHTML="Start:("+ outstart+ ")"+ g+ o+ r;
+	                document.getElementById('move').innerHTML="";
+	                break;
+	            case "touchend":
+	                outend = event.changedTouches[0].clientX.toFixed(0) + ", " + event.changedTouches[0].clientY.toFixed(0);
+	                document.getElementById('end').innerHTML="End:("+ outend+ ")"+ g+ o+ r;
+	                break;
+	            case "touchmove":
+	                event.preventDefault();
+	                outmove = event.changedTouches[0].clientX.toFixed(0) + ", " + event.changedTouches[0].clientY.toFixed(0);
+	                document.getElementById('move').innerHTML=document.getElementById('move').innerHTML+ "</br>"+ "Move:("+ outmove+ ")"+ g+ o+ r;
+	                break;
+	        }      
+	    }
+	}
+
+	if (window.DeviceOrientationEvent){
+	    window.addEventListener('deviceorientation', deviceOrientationHandler, false);
+	    function deviceOrientationHandler(e){
+	        var gamma = e.gamma; var beta = e.beta; var alpha = e.alpha;       
+	        if (e.gamma){
+	            var out= e.gamma.toFixed(2);
+	            Xo=alpha.toFixed(2);
+	            Yo=beta.toFixed(2);
+	            Zo=gamma.toFixed(2);
+	        }
+	    }
+	}	
+	if (window.DeviceMotionEvent){
+		window.addEventListener('devicemotion', function(event){
+            var gacc = event.accelerationIncludingGravity;          
+            var gx = gacc.x; var gy = gacc.y; var gz = gacc.z;           
+            Xg=gx.toFixed(2);
+            Yg=gy.toFixed(2);
+            Zg=gz.toFixed(2);
+            var rotation = event.rotationRate;
+            if (rotation){
+                var rx = rotation.alpha; var ry = rotation.beta; var rz = rotation.gamma;           
+                Xr=rx.toFixed(2);
+                Yr=ry.toFixed(2);
+                Zr=rz.toFixed(2);
+            }
+        }, false)
+	}
+	document.onkeydown=keyDown;
+	document.onkeyup = keyUp;
+	function keyDown(e){
+		var g = "("+ Xg+ ", "+ Yg+ ", "+ Zg+ ")";
+	    var r = "("+ Xr+ ", "+ Yr+ ", "+ Zr+ ")";
+	    var o = "("+ Xo+ ", "+ Yo+ ", "+ Zo+ ")";
+	    e=e||event;
+	    if (e.key){
+	        var thekey='Down:'+ e.key;
+	    }else{
+	        var thekey ='Down:'+ e.code;
+	    }
+	    var t = Date.now();
+	    document.getElementById('kd').innerHTML=thekey+ "("+ t.toString().substr(-5, 5)+ ")"+ g+ r+ o;       
+	}
+
+	function keyUp(e){
+		var g = "("+ Xg+ ", "+ Yg+ ", "+ Zg+ ")";
+	    var r = "("+ Xr+ ", "+ Yr+ ", "+ Zr+ ")";
+	    var o = "("+ Xo+ ", "+ Yo+ ", "+ Zo+ ")";
+	    e=e||event;
+	    var t = Date.now();
+	    if (e.key){
+	        var thekey='Up:'+ e.key;
+	    }else{
+	        var thekey ='Up:'+ e.code;
+	    }
+	    document.getElementById('ku').innerHTML=thekey+ "("+ t.toString().substr(-5, 5)+ ")"+ g+ r+ o;
+	}
+</script>
+</html>

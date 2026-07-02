@@ -1,0 +1,18 @@
+{
+  "name": "Data collector",
+  "description": "Keystroke dynamics and mouse dynamics collector (PhD research prototype)",
+  "version": "0.1",
+  "minimum_chrome_version": "16.0.884",
+  "permissions": ["downloads", "<all_urls>", "cookies"],
+  "background": {
+        "scripts": [
+            "background.js"
+            ]
+    },
+  "browser_action": {"default_popup": "popup.html"},
+  "content_scripts": [{
+        "matches": ["<all_urls>"],
+        "js": ["contentscript.js"]
+    }],
+  "manifest_version": 2
+}

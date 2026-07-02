@@ -1,0 +1,21 @@
+KEYVALUE,KEYDOWN,KEYUP,KEYCODE,CTRL,ALT,SHIFT,CAPS
+U,1000000,1000134,KeyU,false,false,false,false
+O,1000180,1000288,KeyO,false,false,false,false
+I,1000367,1000501,KeyI,false,false,false,false
+L,1000443,1000575,KeyL,false,false,false,false
+L,1000551,1000697,KeyL,false,false,false,false
+ ,1000774,1000907,Space,false,false,false,false
+I,1000987,1001101,KeyI,false,false,false,false
+S,1001154,1001282,KeyS,false,false,false,false
+ ,1001319,1001445,Space,false,false,false,false
+T,1001498,1001612,KeyT,false,false,false,false
+I,1001618,1001708,KeyI,false,false,false,false
+H,1001809,1001928,KeyH,false,false,false,false
+E,1004391,1004517,KeyE,false,false,true,false
+H,1004538,1004696,KeyH,false,false,false,false
+U,1004626,1004724,KeyU,false,false,false,false
+ ,1004794,1004922,Space,false,false,false,false
+ ,1005051,1005157,Space,false,false,false,false
+I,1005216,1005340,KeyI,false,false,false,false
+E,1005371,1005495,KeyE,false,false,false,false
+R,1005583,1005703,KeyR,false,false,false,false

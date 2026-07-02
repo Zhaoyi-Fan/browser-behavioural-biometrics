@@ -1,0 +1,17 @@
+# Generated demo data and experiment outputs (reproduce with the scripts).
+data/demo/
+**/results/
+data/demo/_results/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.egg-info/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
